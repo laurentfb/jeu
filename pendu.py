@@ -1,4 +1,9 @@
 # MAIN
+# TODO: main en-tete
+# TODO: recuperation mot aléatoire en français +- long selon difficulté
+# TODO: permettre la saisie du mot complet sans donner toutes les lettres
+# TODO: calcul de score
+# TODO: chronométrage ?
 word_found=False
 word_to_guess = "AZERTYU"
 word_guessed = ""
