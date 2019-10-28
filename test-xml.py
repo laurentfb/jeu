@@ -11,6 +11,7 @@ StringIO = io.BytesIO if PY2 else io.StringIO
 characters_to_ignore = "&"
 
 def XmlValidate(xml_to_validate, line_number, csv_col_number):
+    result = True
     # Test #1 : verification validité xml
     clean_xml_to_validate = ''.join(c for c in xml_to_validate if c not in characters_to_ignore)
     try:
@@ -26,16 +27,24 @@ def XmlValidate(xml_to_validate, line_number, csv_col_number):
     # Dans chaque paragraphe, on doit avoir une seule dimension (ie une seule section)
     # ie <paragraph><section>sdsdsd</section></paragraph>
     for paragraph in doc.findall('paragraph'):
-        if len(paragraph.findall('section'))>1:
+        if len(paragraph.findall('section')) > 1:
             print("  - #" + str(line_number) + " Erreur une seule section autorisée par paragraphe (colonne "+str(csv_col_number)+")\n"+xml_to_validate)
-
-    return True
+            result = False
+    # Test #3 : pas de puce dans les sections
+    # ie sous <section><header> puces interdites
+    # Recherche des puces puis de leur parent
+    found_puce = [element for element in doc.iter() if element.text is not None and '•' in element.text]
+    for contenu_puce in found_puce:
+        if contenu_puce.getparent().tag == 'header' or contenu_puce.getparent().tag == 'section':
+            print("  - #" + str(line_number) + " Pas de puce en taille non normale (colonne "+str(csv_col_number)+")\n"+contenu_puce.text)
+            result = False
+    return result
 
 # ------------ MAIN ---------------------
 for file in os.listdir("."):
     if file.endswith(".csv"):
         with open(file,"r",encoding="utf8") as fp:
-            print("\n* Vérification du fichier : "+file)
+            print("\n* Vérification du fichier : "+file+"\n------------------------------------------------")
             nberrors = 0
             for cpt, line in enumerate(fp):
                 tline = str.split(line,"\t")
