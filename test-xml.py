@@ -49,6 +49,15 @@ for file in os.listdir("."):
             for cpt, line in enumerate(fp):
                 tline = str.split(line,"\t")
 
+                # Test avorté à cause des accents (test isascii)
+                #for col_content in tline:
+                #    if not col_content.isascii():
+                #        print("  - #" + str(cpt + 1) + " Erreur chaine avec caractères non ascii)\n" + col_content)
+                #        for c in col_content:
+                #            if not c.isascii():
+                #                print("  - #" + str(cpt+1) + " Caractère non ascii :" + c)
+                #        nberrors += 1
+
                 if not XmlValidate(tline[8],cpt+1,8):
                     nberrors += 1
                 if not XmlValidate(tline[16], cpt + 1, 16):
